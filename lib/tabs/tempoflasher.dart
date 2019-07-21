@@ -17,7 +17,6 @@ class TempoFlasherState extends State<TempoFlasher> with SingleTickerProviderSta
   void initState() {
     print("tempoInMillis: ${widget._tempoInMillis}");
     _durationMillis = widget._tempoInMillis;
-    // TODO: implement initState
     super.initState();
     _mcontroller = AnimationController(value: 0.0, lowerBound: 0.0, upperBound: 10.0, duration: Duration(seconds: 1), vsync: this);
     _mcontroller.repeat(period: Duration(milliseconds: _durationMillis)).orCancel;
@@ -84,18 +83,7 @@ class TempoFlasherState extends State<TempoFlasher> with SingleTickerProviderSta
 //                ),
 //              ),
             )
-//        child: new Column(
-//          // center the children
-//          mainAxisAlignment: MainAxisAlignment.center,
-//          children: <Widget>[
-//            new Icon(
-//              Icons.adb,
-//              size: 160.0,
-//              color: Colors.green,
-//            ),
-//            new Text("Second Tab")
-//          ],
-//        ),
+
       ),
     );
   }

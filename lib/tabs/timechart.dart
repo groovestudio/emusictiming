@@ -1,6 +1,6 @@
 class Timechart {
   //final String text;
-  final int bpm;
+  final double bpm;
   final double hz;
   final double ms;
 

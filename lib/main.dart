@@ -41,22 +41,18 @@ class MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
     int minBPM = 60;
     int maxBPM = 180;
     for (var i = minBPM; i <= maxBPM; i+=1) {
-      int bpm = i;
+      double bpm = i.toDouble();
       double hz = bpmToHz(bpm);
       if(hz.toString().length<=4) {
         timecharts.add(
-            new Timechart(
-              bpm: bpm,
-              hz: hz,
-//              hz2: hz * 2,
-//              hz4: hz * 4,
-//              hzH: hz / 5,
-              ms: bpmToMs(bpm),
-            )
+          new Timechart(
+            bpm: bpm,
+            hz: hz,
+            ms: bpmToMs(bpm),
+          )
         );
       }
     }
-
   }
 
   @override
@@ -137,21 +133,8 @@ class MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               new Text("${timechart.bpm} bpm", textAlign: TextAlign.start),
-//              new Text("${timechart.bpm} bpm\n" +
-//                  "${timechart.bpm * 0.5} bpm (1/2x)\n"
-//                      "${timechart.bpm * 2} bpm (2x)\n"
-//              ),
               new Text("${formatDouble(timechart.hz)} hz", textAlign: TextAlign.start),
-//              new Text("${formatDouble(timechart.hz * 0.5)} hz (1/2x)\n" +
-//                  "${formatDouble(timechart.hz)} hz (1x)\n" +
-//                  "${formatDouble(timechart.hz * 2)} hz (2x)\n" +
-//                  "${formatDouble(timechart.hz * 4)} hz (4x)\n" +
-//                  "${formatDouble(timechart.hz * 8)} hz (8x)"),
               new Text("${formatDouble(timechart.ms)} ms", textAlign: TextAlign.start)
-//              new Text("${timechart.ms.toStringAsFixed(2)} ms\n" +
-//                  "${(timechart.ms * 1/2).toStringAsFixed(2)} ms (1/2x)\n"
-//                      "${(timechart.ms * 2).toStringAsFixed(2)} ms (2x)\n"
-//              )
             ],
           ), // Row - title
           children: <Widget>[
@@ -245,14 +228,14 @@ class MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
     }
   }
 
-  static double bpmToHz(int bpm) {
+  static double bpmToHz(double bpm) {
     return (bpm / 60).toDouble();
   }
-  static double bpmToMs(int bpm) {
+  static double bpmToMs(double bpm) {
     return ((60 * 1000) / bpm).toDouble();
   }
   // MyHomeState.msToBpm
-  static double msToBpm(int ms) {
+  static double msToBpm(double ms) {
     return (60 / (ms / 1000)).toDouble();
   }
 }

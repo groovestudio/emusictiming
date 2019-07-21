@@ -39,6 +39,7 @@ class CalculateViewState extends State<CalculateView> {
             children: [
               new Flexible(
                 child: new TextField(
+                  // autofocus: true, // this immediately raises the keyboard, so not sure if this is preferable
                   keyboardType: TextInputType.number,
                   controller: textController,
                   onChanged: (String value) {
@@ -89,10 +90,10 @@ class CalculateViewState extends State<CalculateView> {
                       priorTime = time;
                     }
                     if(count>0) {
-                      print("avg: ${sum/count}, bpm: ${MyHomeState.msToBpm(sum~/count)}");
+                      print("avg: ${sum/count}, bpm: ${MyHomeState.msToBpm((sum/count).toDouble())}");
                       setState(() {
                         print("setting rate and unit state");
-                        rate = MyHomeState.msToBpm(sum~/count);
+                        rate = MyHomeState.msToBpm((sum/count).toDouble());
                         textController.text = rate.toInt().toString();
                         unit = "BPM";
                       });
@@ -144,15 +145,47 @@ class CalculateViewState extends State<CalculateView> {
                         child: new Text("Calculate"),
                         onPressed: () {
                           // Calculate
-                          double i = rate;
-                          if(rate<1)
+                          double bpm;
+                          double hz;
+                          double ms;
+                          if(unit=='BPM') {
+                            if(rate<30 || rate>300) {
+                              final snackBar = SnackBar(content: Text('Value must be between 30-300'));
+                              return;
+                            }
+                            bpm = rate;
+                            hz = bpm/60;
+                            ms = (60 * 1000) / bpm;
+                          }
+                          else if(unit=='HZ') {
+                            if(rate<0.5 || rate>6) {
+                              final snackBar = SnackBar(content: Text('Value must be between 0.5-6'));
+                              return;
+                            }
+                            hz = rate;
+                            bpm = hz * 60;
+                            ms = (60 * 1000) / bpm;
+
+                          }
+                          else if(unit=='MS') {
+
+                            if(rate<30 || rate>3000) {
+                              final snackBar = SnackBar(content: Text('Value must be between 30-3000'));
+                              return;
+                            }
+                            ms = rate;
+                            bpm = (60 * 1000) / ms;
+                            hz = bpm/60;
+                          }
+                          else {
                             return;
-                          double hz = i/60;
+                          }
+
                           Timechart timechart = new Timechart(
                             //text: "#{i} bpm",
-                            bpm: i.toInt(),
+                            bpm: bpm,
                             hz: hz,
-                            ms: (60 * 1000) / i,
+                            ms: ms,
                           );
 
                           setState(() {
@@ -160,6 +193,9 @@ class CalculateViewState extends State<CalculateView> {
                           });
 
                           _saveHistory(rate, unit);
+
+                          // TODO how to remove focus from the value text field upon calculate (so keyboard hides)?
+                          // does not work: Focus.clear(context);
 
                         },
                     ),
@@ -201,20 +237,16 @@ class CalculateViewState extends State<CalculateView> {
                         color: Colors.red,
                       ),
                       onDismissed: (direction) {
-                        setState(() {
-                          _timechartsUser.removeAt(index);
-                        });
+//                        setState(() {
+//                          _timechartsUser.removeAt(index);
+//                        });
+                        _removeHistoryItem(index);
                       }
                     );
                   }
               )
             )
           ),
-
-//          new ListView(
-//            children: _timechartsUser.map(_buildItem).toList(),
-//          ),
-
         ],
       ),
     );
@@ -234,17 +266,18 @@ class CalculateViewState extends State<CalculateView> {
 
   }
 
+  _removeHistoryItem(index) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String> historyList = (prefs.getStringList('history') ?? List<String>()) ;
+    historyList.removeAt(index);
+    await prefs.setStringList('history', historyList);
+    print("removeHistoryItem: $index");
+  }
+
   _clearHistory() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.remove('history');  // could also do: prefs.clear();
     print('after clear history, just removed history from prefs');
-    //    Following was my original attempt... may not work
-    //    List<String> historyList = (prefs.getStringList('history') ?? List<String>()) ;
-    //    for(int i=0; i<historyList.length; i++) {
-    //      historyList.removeAt(historyList.length-1);
-    //    }
-    //    print('after clear history list, size: $historyList.length');
-
   }
 
   Future<List> getHistory() async {
@@ -257,22 +290,18 @@ class CalculateViewState extends State<CalculateView> {
     for (var pair in historyList) {
       print('getHistory processing $pair');
       List<String> split = pair.split(':');
-      double i = double.parse(split.first);
-      double hz = i/60;
+      // TODO, need to check the unit - split.last
+      double bpm = double.parse(split.first);
+      double hz = bpm/60;
       Timechart timechart = new Timechart(
-            //text: "#{i} bpm",
-            bpm: i.toInt(),
-            hz: hz,
-//            hz2: hz * 2,
-//            hz4: hz * 4,
-//            hzH: hz / 5,
-            ms: (60 * 1000) / i,
+        bpm: bpm,
+        hz: hz,
+        ms: (60 * 1000) / bpm,
       );
 
       setState(() {
         _timechartsUser.add(timechart);
       });
-
     }
 
     return historyList;
