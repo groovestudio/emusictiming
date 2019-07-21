@@ -8,7 +8,6 @@ class SettingsView extends StatefulWidget {
 }
 
 class SettingsViewState extends State<SettingsView> {
-  AnimationController _mcontroller;
   String hzPrecision = '2';
   String msPrecision = '2';
   String bpmPrecision = '2';

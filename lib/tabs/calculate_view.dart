@@ -76,25 +76,23 @@ class CalculateViewState extends State<CalculateView> {
                   child: new Text("Tap"),
                   onPressed: () {
                     tapArray.add(new DateTime.now().millisecondsSinceEpoch);
-                    print("tapping - size: ${tapArray.length}, array: ${tapArray}");
-                    List<int> intervals = [];
+                    print("tapping - size: ${tapArray.length}, array: $tapArray");
                     int startTime = new DateTime.now().millisecondsSinceEpoch - (10 * 1000);  // just use the last 10 seconds of tap data
-                    int priorTime = null;
+                    int priorTime;
                     int sum = 0;
                     int count = 0;
                     for(var time in tapArray) {
                       if(time>startTime && priorTime!=null) {
-                        //intervals.add(time-priorTime);
                         sum += time-priorTime;
                         count++;
                       }
                       priorTime = time;
                     }
                     if(count>0) {
-                      print("avg: ${sum/count}, bpm: ${MyHomeState.msToBpm((sum/count).toInt())}");
+                      print("avg: ${sum/count}, bpm: ${MyHomeState.msToBpm(sum~/count)}");
                       setState(() {
                         print("setting rate and unit state");
-                        rate = MyHomeState.msToBpm((sum/count).toInt());
+                        rate = MyHomeState.msToBpm(sum~/count);
                         textController.text = rate.toInt().toString();
                         unit = "BPM";
                       });

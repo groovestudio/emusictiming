@@ -11,7 +11,7 @@ class TempoFlasher extends StatefulWidget {
 
 class TempoFlasherState extends State<TempoFlasher> with SingleTickerProviderStateMixin {
   AnimationController _mcontroller;
-  int _durationMillis = null; // 500;
+  int _durationMillis; // 500;
 
   @override
   void initState() {

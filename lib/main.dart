@@ -245,15 +245,6 @@ class MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
     }
   }
 
-  static String OLDformatDouble(double n) {
-    if((n%1)==0)
-      return n.toInt().toString();
-    else if((n%1).toString().length<=4)
-      return n.toString();
-    else
-      return n.toStringAsFixed(3);   // (n.truncateToDouble() == n ? 0 : 2);
-  }
-
   static double bpmToHz(int bpm) {
     return (bpm / 60).toDouble();
   }
