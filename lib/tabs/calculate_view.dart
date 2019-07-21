@@ -3,12 +3,12 @@ import 'timechart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:music_tool/main.dart';
 
-class First extends StatefulWidget {
+class CalculateView extends StatefulWidget {
   @override
-  MyAppState createState() => new MyAppState();
+  CalculateViewState createState() => new CalculateViewState();
 }
 
-class MyAppState extends State<First> {
+class CalculateViewState extends State<CalculateView> {
   double rate = 0.0;
   String unit = 'BPM';
   List<Row> results = [];
@@ -54,12 +54,14 @@ class MyAppState extends State<First> {
               new DropdownButton<String>(
                 value: unit,
                 onChanged: (String newValue) {
-                  unit = newValue;
+                  setState(() {
+                    unit = newValue;
+                  });
                 },
                 items: <String>['BPM', 'HZ', 'MS']
                     .map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
-                    value: value,
+                      value: value,
                     child: Text(value),
                   );
                 }).toList(),
@@ -193,8 +195,19 @@ class MyAppState extends State<First> {
               ),
               child: new ListView.builder(
                   itemCount: _timechartsUser.length,
-                  itemBuilder: (BuildContext ctxt, int Index) {
-                    return MyHomeState.buildRow(_timechartsUser[Index]);
+                  itemBuilder: (BuildContext ctxt, int index) {
+                    return Dismissible(
+                      child: MyHomeState.buildRow(_timechartsUser[index]),
+                      key: Key(index.toString()),
+                      background: Container(
+                        color: Colors.red,
+                      ),
+                      onDismissed: (direction) {
+                        setState(() {
+                          _timechartsUser.removeAt(index);
+                        });
+                      }
+                    );
                   }
               )
             )

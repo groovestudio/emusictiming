@@ -36,6 +36,10 @@ class TempoFlasherState extends State<TempoFlasher> with SingleTickerProviderSta
         onTap: () {
           final status = _mcontroller.status;
           if(status==AnimationStatus.forward || status==AnimationStatus.reverse) {
+            _mcontroller.animateTo(
+              100.0,
+              curve: Curves.easeOutExpo,
+            );
             _mcontroller.reset();
           }
           else {

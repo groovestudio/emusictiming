@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:music_tool/tabs/first.dart';
-import 'package:music_tool/tabs/second.dart';
-import 'package:music_tool/tabs/third.dart';
+import 'package:music_tool/tabs/calculate_view.dart';
+import 'package:music_tool/tabs/settings_view.dart';
+import 'package:music_tool/tabs/reference_view.dart';
 import 'package:music_tool/tabs/timechart.dart';
 import 'package:music_tool/tabs/tempoflasher.dart';
+import 'package:music_tool/tabs/state_inherited.dart';
 
 void main() {
+
   runApp(new MaterialApp(
-    // Title
       title: "eMusic Timing Tool",
       theme: new ThemeData(
         primarySwatch: Colors.teal,
@@ -70,13 +71,16 @@ class MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
       tabs: <Tab>[
         new Tab(
           // set icon to the tab
-          icon: new Icon(Icons.library_music),
+          icon: new Tooltip(
+            message: 'Calculate Timing & See History',
+            child: new Icon(Icons.library_music),
+          )
         ),
         new Tab(
-          icon: new Icon(Icons.history ),
+          icon: new Icon(Icons.assignment),
         ),
         new Tab(
-          icon: new Icon(Icons.table_chart),
+          icon: new Icon(Icons.settings ),
         ),
       ],
       // setup the controller
@@ -98,7 +102,8 @@ class MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
    */
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
+    return new AppContextInheritedWidget(
+      child: new Scaffold(
       // Appbar
         appBar: new AppBar(
           // Title
@@ -108,7 +113,11 @@ class MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
             // Set the bottom property of the Appbar to include a Tab Bar
             bottom: getTabBar()),
         // Set the TabBar view as the body of the Scaffold
-        body: getTabBarView(<Widget>[new First(), new Second(), new Third()]));
+        body: SafeArea( // SafeArea uses device specific analysis to make sure that no content is obscured from view
+          child: getTabBarView(<Widget>[new CalculateView(), new ReferenceView(), new SettingsView()])
+        )
+      )
+    );
   }
 
   static Widget buildRow(Timechart timechart) {

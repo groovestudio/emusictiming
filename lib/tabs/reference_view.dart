@@ -3,12 +3,12 @@ import 'timechart.dart';
 import 'package:flutter/material.dart';
 import 'package:music_tool/main.dart';
 
-class Third extends StatefulWidget {
+class ReferenceView extends StatefulWidget {
   @override
-  MyAppState createState() => new MyAppState();
+  ReferenceViewState createState() => new ReferenceViewState();
 }
 
-class MyAppState extends State<Third> {
+class ReferenceViewState extends State<ReferenceView> {
   List<Timechart> _timecharts = timecharts;
 
   @override
